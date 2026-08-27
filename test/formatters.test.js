@@ -1,7 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  CT_HUB_2,
   formatForecast,
+  formatPlaces,
   formatBusArrivals,
   haversineMetres,
 } from "../src/tools.js";
@@ -50,8 +52,32 @@ test("formatBusArrivals converts durations to whole minutes", () => {
 });
 
 test("haversineMetres measures CT Hub 2 to Lavender MRT at under 600 m", () => {
-  const ctHub2 = { latitude: 1.3115, longitude: 103.8615 };
   const lavenderMrt = { latitude: 1.3073, longitude: 103.8631 };
-  const distance = haversineMetres(ctHub2, lavenderMrt);
+  const distance = haversineMetres(CT_HUB_2, lavenderMrt);
   assert.ok(distance > 400 && distance < 550, `got ${distance}`);
+});
+
+test("formatPlaces measures distance from CT Hub 2, not somewhere else", () => {
+  const places = [
+    {
+      displayName: { text: "Berseh Food Centre" },
+      rating: 4.2,
+      location: { latitude: 1.3078, longitude: 103.8576 },
+    },
+    {
+      displayName: { text: "Bedok 85 Fengshan" },
+      location: { latitude: 1.3236, longitude: 103.9273 },
+    },
+  ];
+
+  const [berseh, bedok] = formatPlaces(places, CT_HUB_2);
+
+  assert.deepEqual(berseh, {
+    name: "Berseh Food Centre",
+    rating: 4.2,
+    distance_m: 598,
+  });
+  // Bedok is a bus ride away, so it must not come back as a walkable distance.
+  assert.equal(bedok.rating, null);
+  assert.ok(bedok.distance_m > 7000, `got ${bedok.distance_m}`);
 });

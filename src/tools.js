@@ -100,7 +100,8 @@ export async function executeTool(name, args, env) {
 // ---------------------------------------------------------------------------
 
 async function findLunchPlaces({ query, open_now = false }, env) {
-  const centre = { latitude: 1.3236, longitude: 103.9273 };
+  // Bias the search, and measure distances, from where the user actually is.
+  const centre = CT_HUB_2;
 
   const body = {
     textQuery: query,
