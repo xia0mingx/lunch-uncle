@@ -4,58 +4,351 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lunch Uncle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --uncle: #fde68a; --you: #dbeafe; --ink: #1f2937; }
+    :root {
+      --ink: #2f2a24;
+      --muted: #8a7f72;
+      --cream: #fff7ec;
+      --uncle-1: #ffd97d;
+      --uncle-2: #ffc44d;
+      --you-1: #4dabf7;
+      --you-2: #2f95ec;
+      --line: #f0e2cf;
+      --display: "Baloo 2", system-ui, sans-serif;
+      --body: "Nunito", system-ui, -apple-system, sans-serif;
+    }
+
     * { box-sizing: border-box; }
+
     body {
-      margin: 0; font-family: system-ui, sans-serif; color: var(--ink);
-      background: #f9fafb; display: flex; flex-direction: column; height: 100vh;
+      margin: 0;
+      font-family: var(--body);
+      color: var(--ink);
+      background-color: var(--cream);
+      /* Faint kopitiam-tile dots. */
+      background-image: radial-gradient(circle at 1px 1px, rgba(120, 90, 50, .09) 1px, transparent 0);
+      background-size: 22px 22px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
     }
-    header { padding: 1rem; background: #fff; border-bottom: 1px solid #e5e7eb; }
-    header h1 { margin: 0; font-size: 1.25rem; }
-    header p { margin: .25rem 0 0; color: #6b7280; font-size: .875rem; }
-    #chat { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .5rem; }
+
+    /* ---------------------------------------------------------------- header */
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      padding: .85rem 1.1rem;
+      background: #fff;
+      border-bottom: 3px solid var(--line);
+      box-shadow: 0 2px 12px rgba(120, 90, 50, .07);
+      z-index: 2;
+    }
+
+    .crest {
+      flex: none;
+      width: 46px; height: 46px;
+      display: grid; place-items: center;
+      font-size: 1.6rem;
+      border-radius: 50%;
+      background: linear-gradient(150deg, var(--uncle-1), var(--uncle-2));
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .09), 0 3px 8px rgba(255, 180, 60, .4);
+      animation: sway 5s ease-in-out infinite;
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-5deg); }
+      50%      { transform: rotate(5deg); }
+    }
+
+    .titles { min-width: 0; }
+
+    header h1 {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: .2px;
+      line-height: 1.1;
+    }
+
+    .status {
+      display: flex; align-items: center; gap: .35rem;
+      margin-top: .1rem;
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #37c76a;
+      animation: pulse 2.2s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(55, 199, 106, .65); }
+      70%  { box-shadow: 0 0 0 8px rgba(55, 199, 106, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(55, 199, 106, 0); }
+    }
+
+    /* ------------------------------------------------------------------ chat */
+
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem 1rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: .85rem;
+      scroll-behavior: smooth;
+    }
+
+    #chat::-webkit-scrollbar { width: 10px; }
+    #chat::-webkit-scrollbar-thumb {
+      background: #e8d5bb; border-radius: 99px; border: 3px solid transparent;
+      background-clip: content-box;
+    }
+
+    .row {
+      display: flex;
+      align-items: flex-end;
+      gap: .5rem;
+      max-width: min(78%, 40rem);
+      animation: pop .32s cubic-bezier(.2, .9, .3, 1.3) both;
+    }
+
+    .row.uncle { align-self: flex-start; }
+    .row.you   { align-self: flex-end; }
+
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(10px) scale(.95); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .avatar {
+      flex: none;
+      width: 32px; height: 32px;
+      margin-bottom: 2px;
+      display: grid; place-items: center;
+      font-size: 1.05rem;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--line);
+    }
+
     .bubble {
-      max-width: 75%; padding: .6rem .9rem; border-radius: 1rem; line-height: 1.4;
-      white-space: pre-wrap; word-wrap: break-word;
+      padding: .7rem 1rem;
+      border-radius: 1.2rem;
+      line-height: 1.5;
+      font-size: .97rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      box-shadow: 0 2px 10px rgba(120, 90, 50, .13);
     }
-    .uncle { background: var(--uncle); align-self: flex-start; border-bottom-left-radius: .25rem; }
-    .you { background: var(--you); align-self: flex-end; border-bottom-right-radius: .25rem; }
-    form { display: flex; gap: .5rem; padding: 1rem; background: #fff; border-top: 1px solid #e5e7eb; }
-    input { flex: 1; padding: .6rem .9rem; font-size: 1rem; border: 1px solid #d1d5db; border-radius: .5rem; }
-    button { padding: .6rem 1.2rem; font-size: 1rem; border: 0; border-radius: .5rem; background: var(--ink); color: #fff; cursor: pointer; }
-    button:disabled { opacity: .5; cursor: default; }
+
+    .bubble strong { font-weight: 800; }
+
+    .uncle .bubble {
+      background: linear-gradient(160deg, var(--uncle-1), var(--uncle-2));
+      border-bottom-left-radius: .3rem;
+    }
+
+    .you .bubble {
+      background: linear-gradient(160deg, var(--you-1), var(--you-2));
+      color: #fff;
+      border-bottom-right-radius: .3rem;
+      box-shadow: 0 2px 10px rgba(47, 149, 236, .32);
+    }
+
+    /* Three bouncing dots while Uncle thinks. */
+    .bubble.typing {
+      display: flex; gap: .3rem; padding: .95rem 1rem;
+    }
+    .bubble.typing span {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(80, 55, 20, .55);
+      animation: bounce 1.3s ease-in-out infinite;
+    }
+    .bubble.typing span:nth-child(2) { animation-delay: .16s; }
+    .bubble.typing span:nth-child(3) { animation-delay: .32s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .45; }
+      40%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ------------------------------------------------------------ chips/form */
+
+    .tray {
+      background: #fff;
+      border-top: 3px solid var(--line);
+      padding: .7rem 1rem 1rem;
+    }
+
+    #chips {
+      display: flex;
+      gap: .45rem;
+      overflow-x: auto;
+      padding-bottom: .6rem;
+      scrollbar-width: none;
+    }
+    #chips::-webkit-scrollbar { display: none; }
+
+    #chips.gone { display: none; }
+
+    .chip {
+      flex: none;
+      padding: .4rem .85rem;
+      font-family: var(--body);
+      font-size: .85rem;
+      font-weight: 700;
+      color: #8a5a12;
+      background: #fff4dd;
+      border: 2px solid #ffdf9e;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .chip:hover { background: #ffe9bd; transform: translateY(-2px); }
+    .chip:active { transform: translateY(0); }
+
+    form { display: flex; gap: .55rem; }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: .75rem 1.1rem;
+      font-family: var(--body);
+      font-size: 1rem;
+      color: var(--ink);
+      background: #fffaf2;
+      border: 2px solid var(--line);
+      border-radius: 99px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input::placeholder { color: #b9ab99; }
+    input:focus {
+      border-color: var(--uncle-2);
+      box-shadow: 0 0 0 4px rgba(255, 196, 77, .28);
+    }
+
+    button#send {
+      flex: none;
+      padding: .75rem 1.3rem;
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #4a3208;
+      background: linear-gradient(160deg, var(--uncle-1), var(--uncle-2));
+      border: 0;
+      border-radius: 99px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #e0a52f;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    button#send:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 0 #e0a52f; }
+    button#send:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #e0a52f; }
+    button#send:disabled { opacity: .45; cursor: default; box-shadow: 0 3px 0 #e0a52f; }
+
+    @media (max-width: 480px) {
+      .row { max-width: 88%; }
+      header h1 { font-size: 1.2rem; }
+      button#send { padding: .75rem 1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      #chat { scroll-behavior: auto; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Lunch Uncle</h1>
-    <p>Tell Uncle what you feel like eating. He is at CT Hub 2, Lavender.</p>
+    <div class="crest">👨‍🍳</div>
+    <div class="titles">
+      <h1>Lunch Uncle</h1>
+      <div class="status"><span class="dot"></span> Outside CT Hub 2, Lavender &middot; ready to complain</div>
+    </div>
   </header>
 
   <div id="chat"></div>
 
-  <form id="form">
-    <input id="input" placeholder="Uncle, where to eat?" autocomplete="off" autofocus>
-    <button id="send" type="submit">Send</button>
-  </form>
+  <div class="tray">
+    <div id="chips">
+      <button type="button" class="chip">chicken rice</button>
+      <button type="button" class="chip">something cheap</button>
+      <button type="button" class="chip">got aircon one</button>
+      <button type="button" class="chip">will it rain?</button>
+      <button type="button" class="chip">surprise me</button>
+    </div>
+
+    <form id="form">
+      <input id="input" placeholder="Uncle, where to eat?" autocomplete="off" autofocus>
+      <button id="send" type="submit">Send</button>
+    </form>
+  </div>
 
   <script>
     const chat = document.getElementById("chat");
     const form = document.getElementById("form");
     const input = document.getElementById("input");
     const send = document.getElementById("send");
+    const chips = document.getElementById("chips");
 
     // Conversation so far, in the shape the /chat endpoint expects.
     const history = [];
 
-    function addBubble(role, text) {
-      const div = document.createElement("div");
-      div.className = `bubble ${role === "user" ? "you" : "uncle"}`;
-      div.textContent = text;
-      chat.appendChild(div);
+    // Uncle's replies use **bold** for place names. Escape everything first,
+    // then let only <strong> back through: model output is never trusted as
+    // markup, so there is no path from a reply to live HTML.
+    function renderRich(text) {
+      const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      return escaped.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    }
+
+    function addBubble(role, text, { typing = false } = {}) {
+      const row = document.createElement("div");
+      row.className = `row ${role === "user" ? "you" : "uncle"}`;
+
+      if (role !== "user") {
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = "👨‍🍳";
+        row.appendChild(avatar);
+      }
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      if (typing) {
+        bubble.classList.add("typing");
+        bubble.innerHTML = "<span></span><span></span><span></span>";
+      } else if (role === "user") {
+        bubble.textContent = text;
+      } else {
+        bubble.innerHTML = renderRich(text);
+      }
+
+      row.appendChild(bubble);
+      chat.appendChild(row);
       chat.scrollTop = chat.scrollHeight;
-      return div;
+      return bubble;
+    }
+
+    // Swap a thinking bubble over to Uncle's actual words.
+    function say(bubble, text) {
+      bubble.classList.remove("typing");
+      bubble.innerHTML = renderRich(text);
+      chat.scrollTop = chat.scrollHeight;
     }
 
     form.addEventListener("submit", async (event) => {
@@ -63,10 +356,11 @@
       const message = input.value.trim();
       if (!message) return;
 
+      chips.classList.add("gone");
       input.value = "";
       send.disabled = true;
       addBubble("user", message);
-      const thinking = addBubble("assistant", "Uncle thinking...");
+      const thinking = addBubble("assistant", "", { typing: true });
 
       try {
         const res = await fetch("/chat", {
@@ -80,20 +374,27 @@
           // Show the failure, but keep it out of history. An error notice is
           // not something Uncle said, and replaying it to the model on the
           // next turn would put words in his mouth.
-          thinking.textContent = data.error ?? "Uncle cannot answer that one.";
+          say(thinking, data.error ?? "Uncle cannot answer that one.");
           return;
         }
 
         const reply = data.reply ?? "No reply.";
-        thinking.textContent = reply;
+        say(thinking, reply);
         history.push({ role: "user", content: message });
         history.push({ role: "assistant", content: reply });
       } catch (err) {
-        thinking.textContent = "Cannot reach Uncle. Try again.";
+        say(thinking, "Cannot reach Uncle. Try again.");
       } finally {
         send.disabled = false;
         input.focus();
       }
+    });
+
+    chips.addEventListener("click", (event) => {
+      const chip = event.target.closest(".chip");
+      if (!chip) return;
+      input.value = chip.textContent;
+      form.requestSubmit();
     });
 
     addBubble("assistant", "Eh, what you want to eat? Don't waste my time.");
